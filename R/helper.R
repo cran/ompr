@@ -125,7 +125,7 @@ free_indexes <- function(expr) {
   if (expr[[1]] == "[" && length(expr) >= 3) {
     vars <- vapply(3:length(expr), function(i) {
       x <- expr[[i]]
-      if (lazyeval::is_name(x)) {
+      if (is.name(x)) {
         as.character(x)
       } else {
         NA_character_
@@ -476,11 +476,16 @@ classify_quantifiers <- function(lazy_dots) {
 # construct a quantifier candidate table
 build_quantifier_candidates <- function(subscripts,
                                         subscript_names, filter_dots) {
-  candidates <- expand.grid(subscripts)
-  names(candidates) <- subscript_names
+  candidates <- expand.grid(subscripts, stringsAsFactors = FALSE)
+  colnames(candidates) <- subscript_names
   if (length(filter_dots) > 0) {
-    candidates <- dplyr::filter_(candidates, .dots = filter_dots)
+    filter <- Reduce(function(acc, x) {
+      rlang::quo(!!(acc) & (!!rlang::as_quosure(x$expr, x$env)))
+    }, filter_dots, init = TRUE)
+    filtered_candidates <- rlang::quo(candidates[(!!filter), , drop = FALSE])
+    candidates <- rlang::eval_tidy(filtered_candidates, data = candidates)
   }
+  rownames(candidates) <- NULL
   candidates
 }
 
@@ -490,7 +495,30 @@ validate_quantifier_candidates <- function(candidates, zero_vars_msg) {
     stop(zero_vars_msg)
   }
   only_integer_candidates <- apply(candidates, 1, function(r) {
-    all(!is.na(suppressWarnings(as.integer(r))))
+    !anyNA(suppressWarnings(as.integer(r)))
   })
   stopifnot(only_integer_candidates)
+}
+
+print_model <- function(x) {
+  cat("Mixed integer linear optimization problem\n")
+  var_count <- nvars(x)
+  cat("Variables:\n")
+  cat("  Continuous:", var_count$continuous, "\n")
+  cat("  Integer:", var_count$integer, "\n")
+  cat("  Binary:", var_count$binary, "\n")
+
+  # obj function
+  objective <- x$objective
+  if (!is.null(objective) &&
+      length(objective$sense) == 1) {
+    cat("Model sense:",
+        if (objective$sense == "max") "maximize" else "minimize",
+        "\n")
+  } else {
+    cat("No objective function. \n")
+  }
+
+  # constraints
+  cat("Constraints:", nconstraints(x), "\n")
 }
