@@ -2,15 +2,19 @@
 % Please edit documentation in R/milp.R
 \name{MILPModel}
 \alias{MILPModel}
-\title{Create a new MILP Model}
+\title{Experimental: Create a new MILP Model}
 \usage{
 MILPModel()
 }
 \description{
 Create an an empty mixed-integer linear programming model that is
 about 1000 times faster than `MIPModel`.
-It will eventually replace the old `MIPModel` backend for linear models.
 }
 \details{
 Please only use it if you can deal with potential API changes in the future.
+When you use `MILPModel` make sure to always model your problem with
+`MIPModel` as well, just to make sure you get the same results.
+
+It is also always a good idea to test your model with very small input sizes
+and examine the coefficients and rows of the constraint matrix.
 }

@@ -1,3 +1,17 @@
+# ompr 0.8.1
+
+## General changes
+
+* You can now assign coefficients to all column/row combinations using `colwise`
+in the experimental `MILPModel` backend.
+* Non-existent indexes in `sum_expr` now produce a warning instead of an error. The missing indexes will be ignored ([#202](https://github.com/dirkschumacher/ompr/issues/202)).
+
+## Bugfixes
+
+* Fixed a bug were `get_solution` could return mixed up values when variables had partially similar names (eg: `s[i]` and `bus[i]`) by @hugolarzabal ([#244](https://github.com/dirkschumacher/ompr/issues/244)).
+* Fixed a bug on where an if-condition had an input with `length != 1`.
+* Fixed some minor issues with newer `data.table` versions
+
 # ompr 0.8.0
 
 ## General changes
