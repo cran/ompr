@@ -1,3 +1,56 @@
+# ompr 1.0.0
+
+## General changes
+
+* Rewrote the `MIPModel`. It should now be faster, more maintainable,
+  more stable and it has fewer bugs.
+* Added `sum_over`, a replacement for `sum_expr` in the `MIPModel`
+* `set_bounds` for `MIPModel` now accepts (in)equalities as well (#365)
+* `MIPModel` now supports characters as variable indexes
+* A `solution` object has a new named entry called `additional_solver_output`.
+  In that place solver packages, like `ompr.roi` can store arbitrary solver
+  information. Including solver specific messages and status codes. It should
+  be read using the function `additional_solver_output()`.
+* A `solution` can now have the `solver_status = "success"` which is used
+  by the most recent `ompr.roi` version.
+
+## Bugfixes
+
+* Fixed a bug where using the index "e" in `sum_expr` failed (#327)
+* Fixed a bug where coefficients that came after the variable in the
+  expression would sometimes not be correctly parsed (#265)
+* Fixed a bug where `add_variable` failed if indexes were in the wrong order
+  (#266)
+
+## Deprecations
+
+All listed functions will likely be removed at some later point the future.
+
+* `sum_expr` shall not be used anymore. Please use `sum_over` instead.
+* `MIPLModel` will likely be removed from the package, as the vectorized
+  approach did lead to some problems. Please use `MIPModel` instead.
+* `add_variable_`, `add_constraint_`, `set_objective_`, `set_bounds` and
+  `get_solution_` are not needed anymore with the new `MIPModel` as it is
+  powered by `rlang`.
+* The `.show_progress_bar` parameter is now deprecated in all functions.
+
+## Licensing
+
+* ompr is now licensed under the MIT license (#353).
+
+## Breaking Changes
+
+* `extract_constraints` now always returns a sparse matrix, even if there are 0
+  constraints or variables.
+* The row ordering of the `data.frame` returned with `get_solution(x[i, j])` has
+  slightly changed in special cases, but for the majority of calls, it
+  should stay the same. One of these special cases is if you created your
+  variable similar to `add_variable(model, x[i, j], j = ..., i = ...)`, where
+  the indexes in the variable and the quantifiers have different orderings.
+  In general, please do not depend on the ordering of the rows, but use the
+  indexes to retrieve the correct value. For example by sorting the `data.frame`
+  , before reading.
+
 # ompr 0.8.1
 
 ## General changes

@@ -5,27 +5,41 @@ utils::globalVariables(c("coef", "constant", "mult"))
 #'
 #' @slot variables a data frame hold the variable coefficients. One line for reach variable, row and column.
 #' @slot index_mapping a function that takes a variable name as character and returns a mapping table that maps column ids to variable indexes.
-setClass("LinearVariableCollection",
-         representation(variables = "data.frame", index_mapping = "function"),
-         prototype(variables = data.table::data.table(variable = character(0L),
-                                                      row = integer(0L),
-                                                      col = integer(0L),
-                                                      coef = numeric(0L))))
+#' @keywords internal
+#' @rdname milp-linear-variables
+setClass(
+  "LinearVariableCollection",
+  representation(variables = "data.frame", index_mapping = "function"),
+  prototype(variables = data.table::data.table(
+    variable = character(0L),
+    row = integer(0L),
+    col = integer(0L),
+    coef = numeric(0L)
+  ))
+)
 
 #' An S4 class that represents a single variable
 #'
 #' @slot variable a linear variable collection with just one index '1'
-setClass("LinearVariable",
-         representation(variable = "LinearVariableCollection"))
+#' @rdname milp-linear-variables
+setClass(
+  "LinearVariable",
+  representation(variable = "LinearVariableCollection")
+)
 
 #' Holds a sum of a constant and a linear variable collection
 #'
 #' @slot constant a numeric vector
 #' @slot variables a variable collection
-setClass("LinearVariableSum",
-         representation(constant = "data.frame", variables = "LinearVariableCollection"),
-         prototype(constant = data.table::data.table(row = integer(0L),
-                                                     constant = numeric(0L))))
+#' @rdname milp-linear-variables
+setClass(
+  "LinearVariableSum",
+  representation(constant = "data.frame", variables = "LinearVariableCollection"),
+  prototype(constant = data.table::data.table(
+    row = integer(0L),
+    constant = numeric(0L)
+  ))
+)
 
 is_colwise <- function(x) {
   isTRUE(attr(x, "LinearTransposedVector"))
@@ -44,30 +58,29 @@ is_colwise <- function(x) {
 #' @param ... create a colwise vector
 #' @examples
 #' \dontrun{
-#'   # vectors create matrix rows
-#'   # x[1, 1]
-#'   # x[2, 1]
-#'   # x[3, 1]
-#'   x[1:3, 1]
+#' # vectors create matrix rows
+#' # x[1, 1]
+#' # x[2, 1]
+#' # x[3, 1]
+#' x[1:3, 1]
 #'
-#'   # colwise() creates columns per row
-#'   # 1 * x[1, 1] + 2 * x[1, 2] + 3 * x[1, 3]
-#'   colwise(1, 2, 3) * x[1, colwise(1, 2, 3)]
+#' # colwise() creates columns per row
+#' # 1 * x[1, 1] + 2 * x[1, 2] + 3 * x[1, 3]
+#' colwise(1, 2, 3) * x[1, colwise(1, 2, 3)]
 #'
-#'   # or you have multiple rows and columns and different coefficients
-#'   # 1 * x[1, 1] + 2 * x[1, 2] + 3 * x[1, 3]
-#'   # 4 * x[2, 1] + 5 * x[2, 2] + 6 * x[1, 3]
-#'   colwise(1:6) * x[1:2, colwise(1:3)]
-#'   # in the example above, the colwise vector multiplied with the variable
-#'   # has an element per row and column
-#'   # in general, it can be a multiple of number of columns
+#' # or you have multiple rows and columns and different coefficients
+#' # 1 * x[1, 1] + 2 * x[1, 2] + 3 * x[1, 3]
+#' # 4 * x[2, 1] + 5 * x[2, 2] + 6 * x[1, 3]
+#' colwise(1:6) * x[1:2, colwise(1:3)]
+#' # in the example above, the colwise vector multiplied with the variable
+#' # has an element per row and column
+#' # in general, it can be a multiple of number of columns
 #'
-#'   # you can also combine the two
-#'   # x[1, 1]
-#'   # x[2, 1] + x[2, 2]
-#'   # x[3, 1] + x[3, 2] + x[3, 2]
-#'   x[1:3, colwise(1, 1:2, 1:3)]
-#'
+#' # you can also combine the two
+#' # x[1, 1]
+#' # x[2, 1] + x[2, 2]
+#' # x[3, 1] + x[3, 2] + x[3, 2]
+#' x[1:3, colwise(1, 1:2, 1:3)]
 #' }
 #' @export
 colwise <- function(...) {
@@ -108,6 +121,7 @@ as_colwise <- function(x) {
 #'
 #' @param e1 an object of type 'LinearVariableSum'
 #' @param e2 a numeric vector
+#' @rdname milp-linear-variables
 setMethod("*", signature(e1 = "LinearVariableSum", e2 = "numeric"), function(e1, e2) {
   e1@variables <- e1@variables * e2
 
@@ -126,6 +140,7 @@ setMethod("*", signature(e1 = "LinearVariableSum", e2 = "numeric"), function(e1,
 #'
 #' @param e2 an object of type 'LinearVariableSum'
 #' @param e1 a numeric vector
+#' @rdname milp-linear-variables
 setMethod("*", signature(e1 = "numeric", e2 = "LinearVariableSum"), function(e1, e2) {
   e2 * e1
 })
@@ -136,6 +151,7 @@ setMethod("*", signature(e1 = "numeric", e2 = "LinearVariableSum"), function(e1,
 #'
 #' @param e1 an object of type 'LinearVariableSum'
 #' @param e2 a numeric vector
+#' @rdname milp-linear-variables
 setMethod("-", signature(e1 = "LinearVariableSum", e2 = "numeric"), function(e1, e2) {
   e1 + -1 * e2
 })
@@ -146,6 +162,7 @@ setMethod("-", signature(e1 = "LinearVariableSum", e2 = "numeric"), function(e1,
 #'
 #' @param e1 a numeric vector
 #' @param e2 an object of type 'LinearVariableSum'
+#' @rdname milp-linear-variables
 setMethod("-", signature(e1 = "numeric", e2 = "LinearVariableSum"), function(e1, e2) {
   (-1 * e2) - (-1 * e1)
 })
@@ -158,6 +175,7 @@ setMethod("-", signature(e1 = "numeric", e2 = "LinearVariableSum"), function(e1,
 #' @param e2 an object of type 'LinearVariableSum'
 #'
 #' @return Returns an object of type 'LinearVariableSum'
+#' @rdname milp-linear-variables
 setMethod("+", signature(e1 = "LinearVariableSum", e2 = "LinearVariableSum"), function(e1, e2) {
   e1@variables <- e1@variables + e2@variables
 
@@ -174,6 +192,7 @@ setMethod("+", signature(e1 = "LinearVariableSum", e2 = "LinearVariableSum"), fu
 #' @param e2 an object of type 'LinearVariableSum'
 #'
 #' @return Returns an object of type 'LinearVariableSum'
+#' @rdname milp-linear-variables
 setMethod("-", signature(e1 = "LinearVariableSum", e2 = "LinearVariableSum"), function(e1, e2) {
   e1 + (-1) * e2
 })
@@ -186,6 +205,7 @@ setMethod("-", signature(e1 = "LinearVariableSum", e2 = "LinearVariableSum"), fu
 #' @param e2 an object of type 'LinearVariableCollection'
 #'
 #' @return Returns an object of type 'LinearVariableSum'
+#' @rdname milp-linear-variables
 setMethod("+", signature(e1 = "LinearVariableSum", e2 = "LinearVariableCollection"), function(e1, e2) {
   e1@variables <- e1@variables + e2
   e1
@@ -197,6 +217,7 @@ setMethod("+", signature(e1 = "LinearVariableSum", e2 = "LinearVariableCollectio
 #'
 #' @param e1 an object of type 'LinearVariableCollection'
 #' @param e2 an object of type 'LinearVariableSum'
+#' @rdname milp-linear-variables
 setMethod("+", signature(e1 = "LinearVariableCollection", e2 = "LinearVariableSum"), function(e1, e2) {
   e2 + e1
 })
@@ -207,6 +228,7 @@ setMethod("+", signature(e1 = "LinearVariableCollection", e2 = "LinearVariableSu
 #'
 #' @param e1 an object of type 'LinearVariableCollection'
 #' @param e2 an object of type 'LinearVariableSum'
+#' @rdname milp-linear-variables
 setMethod("-", signature(e1 = "LinearVariableCollection", e2 = "LinearVariableSum"), function(e1, e2) {
   -1 * (e2 - e1)
 })
@@ -217,6 +239,7 @@ setMethod("-", signature(e1 = "LinearVariableCollection", e2 = "LinearVariableSu
 #'
 #' @param e1 an object of type 'LinearVariableSum'
 #' @param e2 an object of type 'LinearVariableCollection'
+#' @rdname milp-linear-variables
 setMethod("-", signature(e1 = "LinearVariableSum", e2 = "LinearVariableCollection"), function(e1, e2) {
   e1 + -1 * e2
 })
@@ -228,6 +251,7 @@ setMethod("-", signature(e1 = "LinearVariableSum", e2 = "LinearVariableCollectio
 #' @param e1 an object of type 'LinearVariableSum'
 #' @param e2 a numeric vector
 #' @return an object of type 'LinearVariableSum'
+#' @rdname milp-linear-variables
 setMethod("+", signature(e1 = "LinearVariableSum", e2 = "numeric"), function(e1, e2) {
   constant_dt <- numeric_to_constant_dt(variables = e1@variables@variables, e2)
   e1@constant <- merge_two_constants(e1@constant, constant_dt)
@@ -247,6 +271,7 @@ merge_two_constants <- function(x, y) {
 #'
 #' @param e1 a numeric vector
 #' @param e2 an object of type 'LinearVariableSum'
+#' @rdname milp-linear-variables
 setMethod("+", signature(e1 = "numeric", e2 = "LinearVariableSum"), function(e1, e2) {
   e2 + e1
 })
@@ -257,6 +282,7 @@ setMethod("+", signature(e1 = "numeric", e2 = "LinearVariableSum"), function(e1,
 #'
 #' @param e2 a missing value
 #' @param e1 an object of type 'LinearVariableSum'
+#' @rdname milp-linear-variables
 setMethod("-", signature(e1 = "LinearVariableSum", e2 = "missing"), function(e1, e2) {
   e1 * (-1)
 })
@@ -267,6 +293,7 @@ setMethod("-", signature(e1 = "LinearVariableSum", e2 = "missing"), function(e1,
 #'
 #' @param e2 a missing value
 #' @param e1 an object of type 'LinearVariableCollection'
+#' @rdname milp-linear-variables
 setMethod("-", signature(e1 = "LinearVariableCollection", e2 = "missing"), function(e1, e2) {
   e1 * (-1)
 })
@@ -277,6 +304,7 @@ setMethod("-", signature(e1 = "LinearVariableCollection", e2 = "missing"), funct
 #'
 #' @param e2 a missing value
 #' @param e1 an object of type 'LinearVariableSum'
+#' @rdname milp-linear-variables
 setMethod("+", signature(e1 = "LinearVariableSum", e2 = "missing"), function(e1, e2) {
   e1
 })
@@ -287,6 +315,7 @@ setMethod("+", signature(e1 = "LinearVariableSum", e2 = "missing"), function(e1,
 #'
 #' @param e2 a missing value
 #' @param e1 an object of type 'LinearVariableCollection'
+#' @rdname milp-linear-variables
 setMethod("+", signature(e1 = "LinearVariableCollection", e2 = "missing"), function(e1, e2) {
   e1
 })
@@ -297,6 +326,7 @@ setMethod("+", signature(e1 = "LinearVariableCollection", e2 = "missing"), funct
 #'
 #' @param e1 an object of type 'LinearVariableCollection'
 #' @param e2 a numeric vector without NAs
+#' @rdname milp-linear-variables
 setMethod("+", signature(e1 = "LinearVariableCollection", e2 = "numeric"), function(e1, e2) {
   if (anyNA(e2)) {
     stop("You try to add a numeric vector that contains NA values to a variable.", call. = FALSE)
@@ -304,9 +334,11 @@ setMethod("+", signature(e1 = "LinearVariableCollection", e2 = "numeric"), funct
   if (all(e2 == 0)) {
     return(e1)
   }
-  err_msg <- paste0("You have definied variables for ", max(e1@variables$row),
-                    " rows, but you add a constant with ", length(e2), " elements. ",
-                    "The length of the two have to match or the constant is of length 1, i.e. a scalar.")
+  err_msg <- paste0(
+    "You have definied variables for ", max(e1@variables$row),
+    " rows, but you add a constant with ", length(e2), " elements. ",
+    "The length of the two have to match or the constant is of length 1, i.e. a scalar."
+  )
   constant <- numeric_to_constant_dt(e1@variables, e2, err_msg)
   new("LinearVariableSum", variables = e1, constant = constant)
 })
@@ -327,6 +359,7 @@ numeric_to_constant_dt <- function(variables, vec, error_msg) {
 #'
 #' @param e1 a numeric value
 #' @param e2 an object of type 'LinearVariableCollection'
+#' @rdname milp-linear-variables
 setMethod("+", signature(e1 = "numeric", e2 = "LinearVariableCollection"), function(e1, e2) {
   e2 + e1
 })
@@ -337,6 +370,7 @@ setMethod("+", signature(e1 = "numeric", e2 = "LinearVariableCollection"), funct
 #'
 #' @param e1 an object of type 'LinearVariableCollection'
 #' @param e2 a numeric value
+#' @rdname milp-linear-variables
 setMethod("-", signature(e1 = "LinearVariableCollection", e2 = "numeric"), function(e1, e2) {
   e1 + -1 * e2
 })
@@ -347,6 +381,7 @@ setMethod("-", signature(e1 = "LinearVariableCollection", e2 = "numeric"), funct
 #'
 #' @param e1 a numeric value
 #' @param e2 an object of type 'LinearVariableCollection'
+#' @rdname milp-linear-variables
 setMethod("-", signature(e1 = "numeric", e2 = "LinearVariableCollection"), function(e1, e2) {
   (-1 * e2) - (-1 * e1)
 })
@@ -357,6 +392,7 @@ setMethod("-", signature(e1 = "numeric", e2 = "LinearVariableCollection"), funct
 #'
 #' @param e1 an object of type 'LinearVariableCollection'
 #' @param e2 a numeric value
+#' @rdname milp-linear-variables
 setMethod("/", signature(e1 = "LinearVariableCollection", e2 = "numeric"), function(e1, e2) {
   e1 * (1 / e2)
 })
@@ -367,6 +403,7 @@ setMethod("/", signature(e1 = "LinearVariableCollection", e2 = "numeric"), funct
 #'
 #' @param e2 a numeric value
 #' @param e1 an object of type 'LinearVariableCollection'
+#' @rdname milp-linear-variables
 setMethod("/", signature(e1 = "LinearVariableSum", e2 = "numeric"), function(e1, e2) {
   e1 * (1 / e2)
 })
@@ -379,24 +416,27 @@ setMethod("/", signature(e1 = "LinearVariableSum", e2 = "numeric"), function(e1,
 #' @param e2 an object of type 'LinearVariableCollection'
 #'
 #' @import data.table
+#' @rdname milp-linear-variables
 setMethod("+", signature(e1 = "LinearVariableCollection", e2 = "LinearVariableCollection"), function(e1, e2) {
   expand_e2 <- nrow(e2@variables) == 1L &&
-      nrow(e1@variables) > 1L &&
-      length(unique(e1@variables$variable)) == 1L
+    nrow(e1@variables) > 1L &&
+    length(unique(e1@variables$variable)) == 1L
   if (expand_e2) {
     temp <- e2
     e2 <- e1
     e1 <- temp
   }
   expand_e1 <- nrow(e1@variables) == 1L &&
-      nrow(e2@variables) > 1L &&
-      length(unique(e2@variables$variable)) == 1L
+    nrow(e2@variables) > 1L &&
+    length(unique(e2@variables$variable)) == 1L
   if (expand_e1) {
     e1_vars <- e1@variables
-    e1@variables <- data.table::data.table(variable = e1_vars[["variable"]],
-                                           row = sort(unique(e2@variables$row)),
-                                           col = e1_vars[["col"]],
-                                           coef = e1_vars[["coef"]])
+    e1@variables <- data.table::data.table(
+      variable = e1_vars[["variable"]],
+      row = sort(unique(e2@variables$row)),
+      col = e1_vars[["col"]],
+      coef = e1_vars[["coef"]]
+    )
   }
 
   new_vars <- data.table::rbindlist(list(e1@variables, e2@variables))
@@ -412,6 +452,7 @@ setMethod("+", signature(e1 = "LinearVariableCollection", e2 = "LinearVariableCo
 #'
 #' @param e1 an object of type 'LinearVariableCollection'
 #' @param e2 an object of type 'LinearVariableCollection'
+#' @rdname milp-linear-variables
 setMethod("-", signature(e1 = "LinearVariableCollection", e2 = "LinearVariableCollection"), function(e1, e2) {
   e1 + -1 * e2
 })
@@ -424,6 +465,7 @@ setMethod("-", signature(e1 = "LinearVariableCollection", e2 = "LinearVariableCo
 #'
 #' @param e1 an object of type 'LinearVariableCollection'
 #' @param e2 a numeric vector
+#' @rdname milp-linear-variables
 setMethod("*", signature(e1 = "LinearVariableCollection", e2 = "numeric"), function(e1, e2) {
   if (is_colwise(e2)) {
     val <- e2
@@ -435,8 +477,10 @@ setMethod("*", signature(e1 = "LinearVariableCollection", e2 = "numeric"), funct
     e1
   } else {
     row_indexes <- if (length(e2) == 1L) unique(e1@variables[["row"]]) else seq_along(e2)
-    mult_dt <- data.table::data.table(row = row_indexes,
-                                      mult = e2, key = "row")
+    mult_dt <- data.table::data.table(
+      row = row_indexes,
+      mult = e2, key = "row"
+    )
     new_vars <- e1@variables
     new_vars <- merge(new_vars, mult_dt, "row")
     new_vars <- setDT(new_vars)[, coef := coef * mult]
@@ -451,6 +495,7 @@ setMethod("*", signature(e1 = "LinearVariableCollection", e2 = "numeric"), funct
 #'
 #' @param e1 a numeric value
 #' @param e2 an object of type 'LinearVariableCollection'
+#' @rdname milp-linear-variables
 setMethod("*", signature(e1 = "numeric", e2 = "LinearVariableCollection"), function(e1, e2) {
   e2 * e1
 })
@@ -470,22 +515,23 @@ setMethod("*", signature(e1 = "numeric", e2 = "LinearVariableCollection"), funct
 #'
 #' @examples
 #' \dontrun{
-#'   # vectors create matrix rows
-#'   # x[1, 1]
-#'   # x[2, 1]
-#'   # x[3, 1]
-#'   x[1:3, 1]
+#' # vectors create matrix rows
+#' # x[1, 1]
+#' # x[2, 1]
+#' # x[3, 1]
+#' x[1:3, 1]
 #'
-#'   # colwise() creates columns per row
-#'   # 1 * x[1, 1] + 2 * x[1, 2] + 3 * x[1, 3]
-#'   colwise(1, 2, 3) * x[1, colwise(1, 2, 3)]
+#' # colwise() creates columns per row
+#' # 1 * x[1, 1] + 2 * x[1, 2] + 3 * x[1, 3]
+#' colwise(1, 2, 3) * x[1, colwise(1, 2, 3)]
 #'
-#'   # you can also combine the two
-#'   # x[1, 1]
-#'   # x[2, 1] + x[2, 2]
-#'   # x[3, 1] + x[3, 2] + x[3, 2]
-#'   x[1:3, colwise(1, 1:2, 1:3)]
+#' # you can also combine the two
+#' # x[1, 1]
+#' # x[2, 1] + x[2, 2]
+#' # x[3, 1] + x[3, 2] + x[3, 2]
+#' x[1:3, colwise(1, 1:2, 1:3)]
 #' }
+#' @rdname milp-linear-variables
 setMethod("[", signature("LinearVariableCollection", i = "ANY", j = "ANY", drop = "missing"), function(x, i, j, ..., drop) {
   var_name <- as.character(as.name(substitute(x)))
   counter <- 0
@@ -536,19 +582,20 @@ setMethod("[", signature("LinearVariableCollection", i = "ANY", j = "ANY", drop 
   any_length_0 <- min_length == 0L
   if (any_length_0) {
     stop("One of the indexes of variable '", var_name, "' has a length 0 subscript.",
-         " That means that you passed an empty vector as one of the indexes to this variable.",
-         call. = FALSE)
+      " That means that you passed an empty vector as one of the indexes to this variable.",
+      call. = FALSE
+    )
   }
 
   if (any(list_indexes)) {
-    dt_j <- lapply(names(indexes)[list_indexes], function(x) rlang::get_expr(rlang::quo(unlist(!! as.name(x)))))
-    dt_call <- rlang::quo(new_indexes[, list(!!!dt_j), by = c("row", !!! names(indexes)[!list_indexes])])
+    dt_j <- lapply(names(indexes)[list_indexes], function(x) rlang::get_expr(rlang::quo(unlist(!!as.name(x)))))
+    dt_call <- rlang::quo(new_indexes[, list(!!!dt_j), by = c("row", !!!names(indexes)[!list_indexes])])
     new_indexes <- rlang::eval_tidy(dt_call)
     colnames(new_indexes) <- c("row", names(indexes)[!list_indexes], names(indexes)[list_indexes])
   }
   join_cols <- names(indexes)
   if (!(all(join_cols %in% colnames(new_indexes))) ||
-      !(all(join_cols %in% colnames(index_mapping)))) {
+    !(all(join_cols %in% colnames(index_mapping)))) {
     stop("The variable '", var_name, "' does not seem to be defined properly", call. = FALSE)
   }
   cols <- merge(new_indexes, index_mapping, by = join_cols)
@@ -557,7 +604,9 @@ setMethod("[", signature("LinearVariableCollection", i = "ANY", j = "ANY", drop 
   }
   if (nrow(cols) != nrow(new_indexes)) {
     warning("You used the variable '", var_name, "' with ", nrow(new_indexes),
-            " indexes but only ", nrow(cols), " indexes will be used", call. = FALSE)
+      " indexes but only ", nrow(cols), " indexes will be used",
+      call. = FALSE
+    )
   }
   new_vars <- data.table::data.table(
     variable = var_name,
