@@ -1,7 +1,7 @@
-2e48f3ab5c64c7063e341d35285bc0ea *DESCRIPTION
+7678e88c35e11fb8379b35911b30d8d4 *DESCRIPTION
 8117cc9b6c1387619435b2d5a50cb225 *LICENSE
-7fcb6c82837ab5a786452091413834c1 *NAMESPACE
-967e741965afc45f21a3fb17f0e51126 *NEWS.md
+ea020369fdd9c4f3ab30ea8d0c873576 *NAMESPACE
+4abce4c57e6d027472fad39328f4f595 *NEWS.md
 1afd8674fb32c808d975409f1ae98dd5 *R/abstract-model-impl.R
 211a8eca3240733fbca1c9b5b6c7d0f2 *R/helper.R
 10e4128fa59c853d89163aaa46e79dbd *R/linear-optimization-model-impl.R
@@ -11,7 +11,7 @@ cbc3d439ad568fd027125a43dcabd2a2 *R/linear-optimization-model-linear-constraints
 ce05dd1eb0b0ca9ce7c69ab8b2de676b *R/milp-linearopt-variables.R
 8127e1a83f12107096fcf85101b0e90e *R/model-api.R
 e26e49174b4a4b5c4b3354e28baef156 *R/ompr-package.R
-efe27fec4e71a8f9f3b18f15a3860d80 *R/solution-api.R
+05c13d97b82fdf046329a0f2e68754d3 *R/solution-api.R
 de8fd21b8817d9ad577dc7081f8306ee *R/solution-impl.R
 3f66730025ff756618e3fb03146ce76c *README.md
 cc678766996e43784df505964ac761a1 *man/MILPModel.Rd
