@@ -9,8 +9,8 @@ get_solution.solution <- function(solution, expr, type = "primal") {
   }
   if (is.null(solution_vector) || anyNA(solution_vector)) {
     stop("The solution from the solver is invalid. It is NULL or contains NAs.",
-         " Maybe the solver does not export ", type, "s?",
-         call. = FALSE
+      " Maybe the solver does not export ", type, "s?",
+      call. = FALSE
     )
   }
   extract_solution(solution$model, solution_vector, expr)
@@ -71,9 +71,12 @@ extract_solution <- function(model, solution_vector, expr) {
       na_rows <- as.logical(apply(is.na(var_index), 1, all))
       var_index <- var_index[!na_rows, , drop = FALSE]
       var_values <- solution_vector[grepl(solution_names,
-                                          pattern = instance_pattern
+        pattern = instance_pattern
       )]
-      result_df <- as.data.frame(var_index[, seq_len(ncol(var_index))[-1]])
+      result_df <- as.data.frame(
+        var_index[, seq_len(ncol(var_index))[-1]],
+        stringsAsFactors = FALSE
+      )
       for (x in colnames(result_df)) {
         is_all_integer <- all(grepl("\\d+", result_df[[x]]))
         if (!is.na(is_all_integer) && is_all_integer) {
@@ -87,7 +90,8 @@ extract_solution <- function(model, solution_vector, expr) {
 
       # at last, for backwards compatibility order by free vars
       ordering <- do.call(order, lapply(rev(free_vars), function(x) result_df[[x]]))
-      result_df <- result_df[ordering, ]
+      result_df <- result_df[ordering, , drop = FALSE]
+
       return(result_df)
     }
   } else {
