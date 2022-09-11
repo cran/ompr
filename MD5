@@ -1,10 +1,10 @@
-21787e7a90fe3882c76d0365e36d34fb *DESCRIPTION
+4d6e6a3fbbf53d90dbf31365dcf09ca0 *DESCRIPTION
 8117cc9b6c1387619435b2d5a50cb225 *LICENSE
 cd6ad7b9c048c1e21d71dfdcd2701051 *NAMESPACE
-1ade29b585a8531f8c9da3ec0a8cbbc4 *NEWS.md
+22371b4284d7ba3786fd97df789a58c1 *NEWS.md
 1afd8674fb32c808d975409f1ae98dd5 *R/abstract-model-impl.R
 211a8eca3240733fbca1c9b5b6c7d0f2 *R/helper.R
-5cd503de815144d824d473bba72ec764 *R/linear-optimization-model-impl.R
+102ba6d3a5915980a6d13a9098de63f1 *R/linear-optimization-model-impl.R
 4633de26fe619c06f0055b0942db2ebf *R/linear-optimization-model-linear-constraints.R
 cb049360f0fc232ade9977011b04b5bd *R/linear-optimization-model-linear-functions.R
 17a796af422efd33851c4bf90956c8c2 *R/milp-impl.R
@@ -48,7 +48,7 @@ b3498ee8953538f2f3df8c4ed2c5357e *tests/testthat/test-add-variable.R
 62aa93719d034e64491bc2b75c4e57e2 *tests/testthat/test-linear-constraints.R
 f42e77ba47e9e6ec4e4e081e4425790b *tests/testthat/test-linear-functions.R
 9c52fdbdfa6c7c02b783efa606ee361e *tests/testthat/test-linearops.R
-7dff48261a44b391ea3392fad1fffa48 *tests/testthat/test-model-api-linear-optimization-model.R
+1d815e49206fe52cd2e10cf9e88cb860 *tests/testthat/test-model-api-linear-optimization-model.R
 9e9b16ff9779ee5a05a40bf6a08860c5 *tests/testthat/test-model-api-milp.R
 5a93bdda70186f6765787a926443b3c6 *tests/testthat/test-model-milp.R
 1d50b22b9dd9229d0dc347ee83b3feab *tests/testthat/test-model.R
