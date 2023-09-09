@@ -1,7 +1,7 @@
-4d6e6a3fbbf53d90dbf31365dcf09ca0 *DESCRIPTION
+11b5c75f246d8131ebdc5e3a6e931f1d *DESCRIPTION
 8117cc9b6c1387619435b2d5a50cb225 *LICENSE
 cd6ad7b9c048c1e21d71dfdcd2701051 *NAMESPACE
-22371b4284d7ba3786fd97df789a58c1 *NEWS.md
+dcd23190c06857ae453f422c84a831a8 *NEWS.md
 1afd8674fb32c808d975409f1ae98dd5 *R/abstract-model-impl.R
 211a8eca3240733fbca1c9b5b6c7d0f2 *R/helper.R
 102ba6d3a5915980a6d13a9098de63f1 *R/linear-optimization-model-impl.R
@@ -10,7 +10,7 @@ cb049360f0fc232ade9977011b04b5bd *R/linear-optimization-model-linear-functions.R
 17a796af422efd33851c4bf90956c8c2 *R/milp-impl.R
 ce05dd1eb0b0ca9ce7c69ab8b2de676b *R/milp-linearopt-variables.R
 8127e1a83f12107096fcf85101b0e90e *R/model-api.R
-e26e49174b4a4b5c4b3354e28baef156 *R/ompr-package.R
+879e57c9ff9720f2a3260c142a76ba41 *R/ompr-package.R
 03049c10082e33569cd9724c140be13f *R/solution-api.R
 e5c9dc41581701d93b1e78a33cce1159 *R/solution-impl.R
 3f66730025ff756618e3fb03146ce76c *README.md
@@ -31,7 +31,7 @@ de1f575395740595ff27403a47050e28 *man/get_column_duals.Rd
 c118ad4c72436962858a1e6105f7cd9d *man/nvars.Rd
 c470fe25d987ca0f7d8d4f0a1345b32d *man/objective_function.Rd
 690cc04ecc04089ddc65873188288b3f *man/objective_value.Rd
-4bdaa687628ed8e7affbf3882fb3724d *man/ompr.Rd
+b6c4e97d8871a1f4693bb703909ec2bf *man/ompr.Rd
 c0a27a9bd809dfef8e84a2df6b84f81c *man/set_bounds.Rd
 3e879e249b10b83509d159a224944cc6 *man/set_objective.Rd
 dfba39c73b99e884301abb558aa237f7 *man/solve_model.Rd

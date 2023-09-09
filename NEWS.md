@@ -1,3 +1,8 @@
+# ompr 1.0.4
+
+* Improves the package documentation to use the correct alias.
+* Ompr now requires R 3.5.0 because some dependencies require that now.
+
 # ompr 1.0.3
 
 ## Bugfixes
